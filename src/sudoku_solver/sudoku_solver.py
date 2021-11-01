@@ -79,7 +79,7 @@ class sudoku_array:
 
     def is_valid(self):
         """
-        Checks if the whole sodoku puzzle is valid
+        Checks if the whole sudoku puzzle is valid
         :return: True if valid else False.
         """
         valid = []
@@ -159,7 +159,7 @@ class sudoku_solver:
 
     def backtracking_solver(self, fsudoku_array):
         """
-        This method solves a sodoku puzzle via backtracking.
+        This method solves a sudoku puzzle via backtracking.
         the sudoku_array object is getting change by the method
         :param fsudoku_array: a sudoku_array object
         :return: True if the puzzle is solved else False.
@@ -187,5 +187,4 @@ def solve_sudoku(sudoku):
     """
     sudoku_puzzle = sudoku_array(sudoku)
     game = sudoku_solver(sudoku_puzzle)
-    return [game.solved_sudoku_array.array,game.valid, game.solved]
-
+    return [game.solved_sudoku_array.array, game.valid, game.solved]
