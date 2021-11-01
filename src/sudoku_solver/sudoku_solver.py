@@ -98,7 +98,7 @@ class sudoku_array:
 
     def print_sudoku(self):
         """
-        Print the sudoku puzzle.
+        Prints the sudoku puzzle.
         :return: None
         """
 
@@ -123,6 +123,10 @@ class sudoku_array:
 
 class sudoku_solver:
     def __init__(self, c_sudoku_array):
+        """
+
+        :param c_sudoku_array: a sudoku_array object
+        """
         self.sudoku_array = c_sudoku_array
         self.solved_sudoku_array = []
         self.possible_nums_gen()
@@ -132,6 +136,10 @@ class sudoku_solver:
         self.solved = False if self.solved_sudoku_array.get_next_num_pos() != [-1, -1] else True
 
     def possible_nums_gen(self):
+        """
+        Creates a list with all possible numbers for a position (Ffor the whole puzzle).
+        :return: None
+        """
         self.possible_nums = [[[], [], [], [], [], [], [], [], []] for _ in range(len(self.sudoku_array.array))]
 
         for i, row in enumerate(self.sudoku_array.array):
@@ -150,6 +158,12 @@ class sudoku_solver:
                 self.possible_nums[i][i2] = poss_num
 
     def backtracking_solver(self, fsudoku_array):
+        """
+        This method solves a sodoku puzzle via backtracking.
+        the sudoku_array object is getting change by the method
+        :param fsudoku_array: a sudoku_array object
+        :return: True if the puzzle is solved else False.
+        """
 
         row_x, column_x = fsudoku_array.get_next_num_pos()
 
