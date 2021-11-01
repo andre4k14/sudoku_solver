@@ -3,15 +3,37 @@ import copy
 
 class sudoku_array:
     def __init__(self, array):
+        """
+
+        :param array: 2d (9x9) list of int (0-9)
+        """
         self.array = array
 
     def get_row(self, row):
+        """
+        This method returns a list with all numbers in a row
+
+        :param row: int 0-8
+        :return: list with all ints in the row
+        """
         return self.array[row]
 
     def get_column(self, column):
+        """
+        This method returns a list with all numbers in a column
+
+        :param column: int 0-8
+        :return: list with all ints in the column
+               """
         return [row[column] for row in self.array]
 
     def get_square(self, square):
+        """
+         This method returns a list with all numbers in a square
+
+        :param square:  int 0-8
+        :return: list with all ints in the square
+        """
         square_c = [[[0, 3], [0, 3]], [[0, 3], [3, 6]], [[0, 3], [6, 9]], [[3, 6], [0, 3]], [[3, 6], [3, 6]],
                     [[3, 6], [6, 9]], [[6, 9], [0, 3]], [[6, 9], [3, 6]], [[6, 9], [6, 9]]]
 
@@ -23,6 +45,12 @@ class sudoku_array:
         return square_array
 
     def get_next_num_pos(self):
+        """
+        This method returns the next position thats empty (value = 0), going form the top to bottom.
+        If all positions full [-1,-1] gets returned. [row,column]
+        :return: a list with the possion of the next empty value, if none then [-1,-1]
+        """
+
         for i, row in enumerate(self.array):
             for i2, num in enumerate(row):
                 if num == 0:
@@ -30,6 +58,13 @@ class sudoku_array:
         return [-1, -1]
 
     def is_valid_num(self, row, column, number):
+        """
+        This method checks if having some number the some position is valid.
+        :param row:  int 0-8
+        :param column:  int 0-8
+        :param number:  int 1-9
+        :return: True if position is valid else False.
+        """
         self.array[row][column] = number
 
         num_row = self.get_row(row)
@@ -43,6 +78,10 @@ class sudoku_array:
         return False
 
     def is_valid(self):
+        """
+        Checks if the whole sodoku puzzle is valid
+        :return: True if valid else False.
+        """
         valid = []
         numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9]
         for i, row in enumerate(self.array):
@@ -58,6 +97,10 @@ class sudoku_array:
         return all(valid)
 
     def print_sudoku(self):
+        """
+        Print the sudoku puzzle.
+        :return: None
+        """
 
         print("")
 
@@ -123,7 +166,12 @@ class sudoku_solver:
 
 
 def solve_sudoku(sudoku):
-    sudoku_board = sudoku_array(sudoku)
-    game = sudoku_solver(sudoku_board)
-    return [game.valid, game.solved,game.solved_sudoku_array.array]
+    """Solves a sudoku puzzle (via backtracking).
+
+    :param sudoku: an 9x9 2d list of ints (0-9)
+    :return: 2d list with the solve sudoku puzzle, bool if the solve puzzle is valid, bool if the puzzle is solved
+    """
+    sudoku_puzzle = sudoku_array(sudoku)
+    game = sudoku_solver(sudoku_puzzle)
+    return [game.solved_sudoku_array.array,game.valid, game.solved]
 

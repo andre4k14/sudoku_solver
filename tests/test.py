@@ -1,19 +1,12 @@
-import sys
-import signal
+import unittest
+import sudoku_solver
 
+class TestSudokuSolver(unittest.TestCase):
 
-def cleanup(*args):
-    print("The program is stopping")
-    sys.exit(0)
+    def test_sudoku_array(self):
+        self.assertEqual("15", "15")
 
-
-def main():
-    pass
 
 
 if __name__ == '__main__':
-    signal.signal(signal.SIGINT, cleanup)
-    try:
-        main()
-    except KeyboardInterrupt:
-        cleanup()
+    unittest.main()
