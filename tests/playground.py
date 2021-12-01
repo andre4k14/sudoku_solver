@@ -1,6 +1,6 @@
 import sys
 import signal
-from sudoku_solver.sudoku_solver import sudoku_array, sudoku_solver
+from sudoku_solver.sudoku_solver import SudokuArray, sudoku_solver
 from sudoku_solver import solve_sudoku
 
 
@@ -60,7 +60,7 @@ def main():
               [0, 0, 0, 0, 0, 0, 0, 0, 0],
               [3, 0, 0, 0, 0, 0, 0, 0, 4]]
 
-    sudoku = sudoku_array(test_3)
+    sudoku = SudokuArray(test_3)
     sudoku_s = sudoku_solver(sudoku)
     sudoku_solved = sudoku_s.solved_sudoku_array
     sudoku_solved.print_sudoku()

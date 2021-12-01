@@ -1,4 +1,4 @@
-#This is a small and bad lib to solve sudokus 
+# This is a small and bad lib to solve sudokus 
 
 the sudokus are solved via backtracking it can take a while if the sudoku is unsolvable.
 
