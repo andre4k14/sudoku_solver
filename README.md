@@ -6,6 +6,7 @@ the sudokus are solved via backtracking it can take a while if the sudoku is uns
 
 To install it simply copy the command below.
 
+You need python 3.9 or higher.
 ```bash
 pip3 install "git+https://github.com/andre4k14/sudoku_solver.git"
 ```
