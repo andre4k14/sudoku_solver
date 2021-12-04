@@ -1,6 +1,6 @@
 import sys
 import signal
-from sudoku_solver.sudoku_solver import SudokuArray, sudoku_solver
+from sudoku_solver.sudokusolver import SudokuArray, SudokuSolver
 from sudoku_solver import solve_sudoku
 
 
@@ -40,7 +40,7 @@ def main():
               [0, 9, 0, 0, 3, 0, 0, 0, 0],
               [3, 0, 0, 0, 5, 0, 9, 6, 8]]
 
-    test_4 = [[0, 0, 0, 0, 0, 0, 0, 0, 0],  #empty
+    test_4 = [[0, 0, 0, 0, 0, 0, 0, 0, 0],  # empty
               [0, 0, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -50,7 +50,7 @@ def main():
               [0, 0, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
-    test_5 = [[1, 0, 0, 0, 0, 0, 0, 0, 2],  #unsolvable
+    test_5 = [[1, 0, 0, 0, 0, 0, 0, 0, 2],  # unsolvable
               [0, 0, 0, 0, 0, 0, 0, 0, 0],
               [0, 0, 4, 0, 0, 0, 3, 0, 0],
               [0, 0, 0, 1, 0, 2, 0, 0, 0],
@@ -60,10 +60,18 @@ def main():
               [0, 0, 0, 0, 0, 0, 0, 0, 0],
               [3, 0, 0, 0, 0, 0, 0, 0, 4]]
 
+    solve_sudoku(test_1, 2)
+
+    sudoku = SudokuArray(test_2)
     sudoku = SudokuArray(test_3)
-    sudoku_s = sudoku_solver(sudoku)
+    sudoku = SudokuArray(test_4)
+    sudoku = SudokuArray(test_5)
+    sudoku_s = SudokuSolver(sudoku)
+    sudoku_s.solve(10)
     sudoku_solved = sudoku_s.solved_sudoku_array
+    print(sudoku_solved.create_representation_sudoku())
     sudoku_solved.print_sudoku()
+    print(sudoku_solved.create_representation_sudoku())
 
 
 if __name__ == '__main__':

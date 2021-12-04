@@ -1,4 +1,7 @@
+from typing import Optional
+
 import copy
+from timeit import default_timer as timer
 
 """
 s_array is
@@ -69,9 +72,9 @@ class SudokuArray:
 
     def get_next_num_pos(self) -> list[int]:
         """
-        This method returns the next position thats empty (value = 0), going form the top to bottom.
+        This method returns the next position that's empty (value = 0), going form the top to bottom.
         If all positions full [-1,-1] gets returned. [row,column]
-        :return: a list with the possion of the next empty value, if none then [-1,-1]
+        :return: a list with the position of the next empty value, if none then [-1,-1]
         """
 
         for i, row in enumerate(self.array):
@@ -119,17 +122,16 @@ class SudokuArray:
 
         return all(valid)
 
-    def print_sudoku(self) -> None:
+    def create_representation_sudoku(self) -> str:
         """
         Prints the sudoku puzzle.
         :return: None
         """
-
-        print("")
+        msg = ""
 
         for index, row in enumerate(self.array):
             if index % 3 == 0 and index != 0:
-                print("-" * 22)
+                msg += f"{('-' * 21)}\n"
             row_ = ""
             for i, num in enumerate(row):
                 if i % 3 == 0 and i != 0:
@@ -139,14 +141,23 @@ class SudokuArray:
                 else:
                     str_num = str(num)
 
-                row_ += f"{str_num} "
+                if i != 8:
+                    str_num += " "
 
-            print(row_)
+                row_ += str_num
 
-        print("")
+            if index != 8:
+                msg += f"{row_}\n"
+            else:
+                msg += f"{row_}"
+
+        return msg
+
+    def print_sudoku(self) -> None:
+        print(f"\n{self.create_representation_sudoku()}\n", end="")
 
 
-class sudoku_solver:
+class SudokuSolver:
     def __init__(self, c_sudoku_array: SudokuArray):
         """
 
@@ -154,14 +165,18 @@ class sudoku_solver:
         """
         self.sudoku_array: SudokuArray = c_sudoku_array
         self.possible_nums: list[list[list[int]]] = self.possible_nums_gen()
-        self.solved_sudoku_array: SudokuArray = copy.deepcopy(self.sudoku_array)
-        self.backtracking_solver(self.solved_sudoku_array)
-        self.valid: bool = self.solved_sudoku_array.is_valid()
-        self.solved: bool = False if self.solved_sudoku_array.get_next_num_pos() != [-1, -1] else True
+
+        self.solved_sudoku_array: Optional[SudokuArray] = None
+
+        self._cut_off_time: Optional[int] = None
+        self._start_time: Optional[float] = None
+
+        self.valid: Optional[bool] = None
+        self.solved: Optional[bool] = None
 
     def possible_nums_gen(self) -> list[list[list[int]]]:
         """
-        Creates a list with all possible numbers for a position (Ffor the whole puzzle).
+        Creates a list with all possible numbers for a position (for the whole puzzle).
         :return: None
         """
 
@@ -187,7 +202,7 @@ class sudoku_solver:
 
         return list_possible_nums
 
-    def backtracking_solver(self, fsudoku_array: SudokuArray) -> bool:
+    def _backtracking_solver(self, fsudoku_array: SudokuArray) -> bool:
         """
         This method solves a sudoku puzzle via backtracking.
         the sudoku_array object is getting change by the method
@@ -195,26 +210,67 @@ class sudoku_solver:
         :return: True if the puzzle is solved else False.
         """
 
-        row_x, column_x = fsudoku_array.get_next_num_pos()
+        if self._cut_off_time is None or timer() - self._start_time < self._cut_off_time:  # type: ignore
+            row_x, column_x = fsudoku_array.get_next_num_pos()
 
-        if row_x == -1:
-            return True
-        for x in self.possible_nums[row_x][column_x]:
-            if fsudoku_array.is_valid_num(row_x, column_x, x):
-                fsudoku_array.array[row_x][column_x] = x
-                if self.backtracking_solver(fsudoku_array):
-                    return True
-                fsudoku_array.array[row_x][column_x] = 0
+            if row_x == -1:
+                return True
+            for x in self.possible_nums[row_x][column_x]:
+                if fsudoku_array.is_valid_num(row_x, column_x, x):
+                    fsudoku_array.array[row_x][column_x] = x
+                    if self._backtracking_solver(fsudoku_array):
+                        return True
+                    fsudoku_array.array[row_x][column_x] = 0
 
-        return False
+            return False
+        else:
+            return False
+
+    def solve(self, cut_off_time: Optional[int] = None):
+        self.solved_sudoku_array = copy.deepcopy(self.sudoku_array)
+
+        if cut_off_time is not None:
+            self._cut_off_time = cut_off_time
+            self._start_time = timer()
+
+        self._backtracking_solver(self.solved_sudoku_array)
+        self.valid = self.solved_sudoku_array.is_valid()
+        self.solved = False if self.solved_sudoku_array.get_next_num_pos() != [-1, -1] else True
 
 
-def solve_sudoku(sudoku: s_array) -> tuple[s_array, bool, bool]:
+def solve_sudoku(sudoku: s_array, cut_off_time: Optional[int] = None) -> tuple[Optional[s_array], bool, bool]:
     """Solves a sudoku puzzle (via backtracking).
 
+    :param cut_off_time: the amount of time the backtracking solver should run before cutting off standard time is 10s
     :param sudoku: an 9x9 2d list of ints (0-9)
     :return: 2d list with the solve sudoku puzzle, bool if the solve puzzle is valid, bool if the puzzle is solved
     """
+
+    # errors
+    if len(sudoku) != 9:
+        raise ValueError("wrong size should be 9x9 2d list")
+
+    if not all([True if len(row) == 9 else False for row in sudoku]):
+        raise ValueError("wrong size should be 9x9 2d list")
+
+    for x in range(len(sudoku)):
+        for y in range(len(sudoku[x])):
+            if not isinstance(sudoku[x][y], int):
+                raise TypeError(" wrong datatype should only be int")
+
+    if cut_off_time is None:
+        cut_off_time = 10
+
+    # errors
+    if not isinstance(cut_off_time, int):
+        raise TypeError("cut_off_time should only be a positive integer")
+
+    if cut_off_time <= 0:
+        raise ValueError("cut_off_time should only be a positive integer")
+
     sudoku_puzzle = SudokuArray(sudoku)
-    game = sudoku_solver(sudoku_puzzle)
-    return (game.solved_sudoku_array.array, game.valid, game.solved)
+    game = SudokuSolver(sudoku_puzzle)
+
+    game.solve(cut_off_time)
+
+    return game.solved_sudoku_array.array, game.valid, game.solved  # type: ignore

@@ -1,1 +1,2 @@
-from sudoku_solver.sudoku_solver import solve_sudoku
+# flake8: noqa
+from sudoku_solver.sudokusolver import solve_sudoku
